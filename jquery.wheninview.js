@@ -29,6 +29,7 @@
 
         // set default callbacks
         settings.elementIn = inCallback || settings.elementIn || function($elems){
+            // Stagger the class additions (default stagger interval is 0, so no visible effect)
             $elems.each(function(i){
                 var $elem = jQuery(this);
                 setTimeout(function(){
