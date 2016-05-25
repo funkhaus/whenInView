@@ -3,23 +3,6 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script type="text/javascript" src="../wheninview.js"></script>
 
-        <script type="text/javascript">
-
-            $(document).ready(function(){
-                $('img').whenInView({
-                    elementIn: function(a){
-                        console.log('in: ');
-                        console.log(a);
-                    },
-                    elementOut: function(a){
-                        console.log('out: ');
-                        console.log(a);
-                    }
-                });
-            });
-
-        </script>
-
         <style>
             .content .info {
                 background-color: #b00;
@@ -28,15 +11,27 @@
                 background-color: #dfd;
             }
             img {
+                transition: opacity 1s;
                 height: 300px;
                 width: 540px;
+                opacity: 0;
+            }
+            img.element-in-view {
+                opacity: 1;
             }
             .row {
                 margin-bottom: 60px;
             }
+            .counter {
+                position: fixed;
+                right: 0;
+                top: 0;
+            }
         </style>
     </head>
     <body>
+
+        <div class="counter"><span></span> images in view</div>
 
         <div class="tall">
 
@@ -83,5 +78,21 @@
             </div>
         </div>
 
+        <script type="text/javascript">
+
+            $(document).ready(function(){
+
+                $('img').whenInView();
+
+                var update = function(){
+                    $('.counter span').text( $('.element-in-view').length );
+                }
+
+                $(window).scroll(update);
+                $(window).resize(update);
+                update();
+            });
+
+        </script>
     </body>
 </html>

@@ -1,14 +1,20 @@
 (function($) {
 
-    $.fn.whenInView = function(options) {
+    $.fn.whenInView = function(options, outCb) {
 
-        var inCallback = null,
+        var inCallback,
+            outCallback,
             $elems = this;
 
+        // if first param is function, treat as inCallback
         if (typeof options === 'function') {
             inCallback = options;
             options = {};
         }
+
+        // if second param is function, treat as outCallback
+        if (typeof outCb === 'function')
+            outCallback = outCb;
 
         // Defaults
         var settings = $.extend({
@@ -23,16 +29,13 @@
         settings.elementIn = inCallback || settings.elementIn || function($elems){
             $elems.addClass( settings.className );
         };
-
-        settings.elementOut = settings.elementOut || function($elems){
-            $elems.addClass( settings.className );
+        settings.elementOut = outCallback || settings.elementOut || function($elems){
+            $elems.removeClass( settings.className );
         };
 
         // Save window dimensions
         var winHeight   = window.innerHeight || document.documentElement.clientHeight;
         var sTop = jQuery(window).scrollTop();
-
-        // $elems.each(function(){ this.inView = false; });
 
         // set top offset and height
         var calculateOffsets = function(){
@@ -43,7 +46,7 @@
                 rect = this.getBoundingClientRect();
 
                 // set data attributes
-                $(this).data('top', rect.top);
+                $(this).data('top', (rect.top + sTop));
                 $(this).data('height', rect.height);
 
             });
@@ -60,11 +63,14 @@
         // function to check what's in view
         var checkVisibility = function(){
 
+            var topTrigger = sTop + settings.topOffset;
+            var bottomTrigger = sTop + winHeight - settings.bottomOffset;
+
             // find all visible elements
             var $visible = $elems.filter(function(){
                 var elTop = jQuery(this).data('top');
                 var elHeight = jQuery(this).data('height');
-                return (elTop + elHeight) > sTop && elTop < (sTop + winHeight) && !this.inView;
+                return (elTop + elHeight) > topTrigger && elTop < bottomTrigger && !this.inView;
             });
 
             if ( $visible.length ){
@@ -82,7 +88,7 @@
             var $outGoing = $elems.filter(function(){
                 var elTop = jQuery(this).data('top');
                 var elHeight = jQuery(this).data('height');
-                return this.inView == true && ((elTop + elHeight) < sTop || elTop > (sTop + winHeight));
+                return this.inView == true && ((elTop + elHeight) < topTrigger || elTop > bottomTrigger);
             });
 
             if ( $outGoing.length ){
