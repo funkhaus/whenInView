@@ -19,6 +19,7 @@
         // Defaults
         var settings = $.extend({
             className: 'element-in-view',
+            container: window,
             elementIn: null,
             elementOut: null,
             topOffset: 0,
@@ -35,7 +36,7 @@
 
         // Save window dimensions
         var winHeight   = window.innerHeight || document.documentElement.clientHeight;
-        var sTop = jQuery(window).scrollTop();
+        var sTop = jQuery(settings.container).scrollTop();
 
         // set top offset and height
         var calculateOffsets = function(){
@@ -105,8 +106,8 @@
         }
 
         // set master scroll listener
-        $(window).scroll(function(){
-            sTop = jQuery(window).scrollTop();
+        $(settings.container).scroll(function(){
+            sTop = jQuery(settings.container).scrollTop();
             window.requestAnimationFrame(checkVisibility);
         });
 
