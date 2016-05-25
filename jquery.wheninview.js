@@ -23,12 +23,18 @@
             elementIn: null,
             elementOut: null,
             topOffset: 0,
-            bottomOffset: 0
+            bottomOffset: 0,
+            staggerInterval: 0
         }, options);
 
         // set default callbacks
         settings.elementIn = inCallback || settings.elementIn || function($elems){
-            $elems.addClass( settings.className );
+            $elems.each(function(i){
+                var $elem = jQuery(this);
+                setTimeout(function(){
+                    $elem.addClass(settings.className);
+                }, i * settings.staggerInterval);
+            });
         };
         settings.elementOut = outCallback || settings.elementOut || function($elems){
             $elems.removeClass( settings.className );
