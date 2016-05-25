@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script type="text/javascript" src="../wheninview.js"></script>
+
+        <script type="text/javascript">
+
+            $(document).ready(function(){
+                $('.content').classInView();
+            });
+
+        </script>
+
+        <style>
+            .content .info {
+                background-color: #b00;
+            }
+            .content.element-in-view .info {
+                background-color: #dfd;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="tall" style="height:2000px;">
+
+            <div class="content" style="background-color: #ccf; height: 100px;">
+                Content (scroll this window)
+                <div class="info" style="position:fixed; right: 0; height: 50px">Green: Content is in viewport. Red: Content is out of viewport</div>
+            </div>
+
+        </div>
+
+    </body>
+</html>
