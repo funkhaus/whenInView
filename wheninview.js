@@ -1,158 +1,115 @@
 (function($) {
 
-/*
+    $.fn.whenInView = function(options) {
 
-    ClassInView
-    jQuery('#element').classInView('class-name')
-        - matching items will have class 'class-name' added when in viewport and removed when out of viewport
-    jQuery('#element').classInView()
-        - matching items will have default class 'element-in-view' added when in viewport and removed when out of viewport
-    jQuery('#element').classInView( { args... })
-        - fuller control over functionality
+        var inCallback = null,
+            $elems = this;
 
-    TODO: Account for window being smaller than minHeightVisible or minWidthVisible amounts
-    TODO: Account for other elements covering element
-    TODO: Account for opacity
-
-*/
-
-    $.fn.classInView = function(options) {
-
-        var className = null;
-
-        if (typeof options === 'string') {
-            className = options;
+        if (typeof options === 'function') {
+            inCallback = options;
             options = {};
         }
 
         // Defaults
         var settings = $.extend({
-            inView: className || 'element-in-view',
-            outView: null,
-            removeWhenOut: true,
-            minHeightVisible: -1,
-            minWidthVisible: -1
+            className: 'element-in-view',
+            elementIn: null,
+            elementOut: null,
+            topOffset: 0,
+            bottomOffset: 0
         }, options);
 
+        // set default callbacks
+        settings.elementIn = inCallback || settings.elementIn || function($elems){
+            $elems.addClass( settings.className );
+        };
+
+        settings.elementOut = settings.elementOut || function($elems){
+            $elems.addClass( settings.className );
+        };
+
         // Save window dimensions
-        var winHeight   = window.innerHeight || document.documentElement.clientHeight,
-            winWidth    = window.innerWidth || document.documentElement.clientWidth;
+        var winHeight   = window.innerHeight || document.documentElement.clientHeight;
+        var sTop = jQuery(window).scrollTop();
+
+        // $elems.each(function(){ this.inView = false; });
+
+        // set top offset and height
+        var calculateOffsets = function(){
+
+            $elems.each(function(){
+
+                // measure rectangle
+                rect = this.getBoundingClientRect();
+
+                // set data attributes
+                $(this).data('top', rect.top);
+                $(this).data('height', rect.height);
+
+            });
+
+        };
 
         // Update window dimensions when necessary
         $(window).resize(function() {
-            winHeight   = window.innerHeight || document.documentElement.clientHeight;
-            winWidth    = window.innerWidth || document.documentElement.clientWidth;
+            winHeight = window.innerHeight || document.documentElement.clientHeight;
+            calculateOffsets();
+            window.requestAnimationFrame(checkVisibility);
         });
 
-        // Function to call on resize and scroll
-        var checkVisibility = function($el) {
-            var elDom = $el[0];
-            var rect = elDom.getBoundingClientRect();
-            var inViewVertical = false;
-            var inViewHorizontal = false;
+        // function to check what's in view
+        var checkVisibility = function(){
 
-            // Shortcut if minHeightVisible is -1
-            if (settings.minHeightVisible == -1) {
-                inViewVertical = (
-                    (rect.top <= 0 && rect.bottom >= winHeight) ||
-                    (rect.top >= 0 && rect.top < winHeight) ||
-                    (rect.bottom > 0 && rect.bottom <= winHeight)
-                );
+            // find all visible elements
+            var $visible = $elems.filter(function(){
+                var elTop = jQuery(this).data('top');
+                var elHeight = jQuery(this).data('height');
+                return (elTop + elHeight) > sTop && elTop < (sTop + winHeight) && !this.inView;
+            });
+
+            if ( $visible.length ){
+
+                // set inView props
+                $visible.each(function(){
+                    this.inView = true;
+                });
+
+                // fire inView callback
+                settings.elementIn($visible);
             }
 
-            /* More complicated cases for minHeightVisible != -1 cases */
-            else {
-                var elHeight = $el.innerHeight();
+            // find all outgoing elements
+            var $outGoing = $elems.filter(function(){
+                var elTop = jQuery(this).data('top');
+                var elHeight = jQuery(this).data('height');
+                return this.inView == true && ((elTop + elHeight) < sTop || elTop > (sTop + winHeight));
+            });
 
-                // Vertical view test
-                // Top is above window and bottom is below, so element is automatically in view
-                if (rect.top <= 0 && rect.bottom >= winHeight) {
-                    inViewVertical = true;
-                }
-                // Top and bottom are visible
-                else if (rect.top >= 0 && rect.top <= winHeight && rect.bottom >= 0 && rect.bottom <= winHeight) {
-                    inViewVertical = true;
-                }
-                // Top is above window but bottom is visible
-                else if (rect.top <= 0 && rect.bottom > 0 && rect.bottom <= winHeight) {
-                    var percentVisible = rect.bottom / elHeight;
-                    inViewVertical = percentVisible >= settings.minHeightVisible;
-                }
-                // Top is visible but bottom is below window
-                else if (rect.top >= 0 && rect.top < winHeight && rect.bottom >= winHeight) {
-                    var pixelsVisible = winHeight - rect.top;
-                    var percentVisible = pixelsVisible / elHeight;
-                    inViewVertical = percentVisible >= settings.minHeightVisible;
-                }
+            if ( $outGoing.length ){
+
+                // set inView props
+                $outGoing.each(function(){
+                    this.inView = false;
+                });
+
+                // fire outgoing callback
+                settings.elementOut($outGoing);
             }
 
-            // Shortcut if minWidthVisible is -1
-            if (settings.minWidthVisible == -1) {
-                inViewHorizontal = (
-                    (rect.left <= 0 && rect.right >= winWidth) ||
-                    (rect.left >= 0 && rect.left < winWidth) ||
-                    (rect.right > 0 && rect.right <= winWidth)
-                );
-            }
-          /* More complicated cases for minWidthVisible != -1 cases */
-            else {
-                var elWidth = $el.innerWidth();
-
-                // Horizontal view test
-                // Left and right expand beyond window, so element is automatically in view
-                if (rect.left <= 0 && rect.right >= winWidth) {
-                    inViewHorizontal = true;
-                }
-                // Left and right are visible
-                else if (rect.left >= 0 && rect.left <= winWidth && rect.right >= 0 && rect.right <= winWidth) {
-                    inViewHorizontal = true;
-                }
-                // Left is beyond window but right is visible
-                else if (rect.left <= 0 && rect.right > 0 && rect.right <= winWidth) {
-                    var percentVisible = rect.right / elWidth;
-                    inViewHorizontal = percentVisible >= settings.minWidthVisible;
-                }
-                // Left is visible byt right is beyond window
-                else if (rect.left >= 0 && rect.left < winWidth && rect.right >= winWidth) {
-                    var pixelsVisible = winWidth - rect.left;
-                    var percentVisible = pixelsVisible / elWidth;
-                    inViewVertical = percentVisible >= settings.minWidthVisible;
-                }
-            }
-
-            // Element is in view
-            if ( inViewVertical && inViewHorizontal ) {
-                if ( !$el.hasClass(settings.inView) ) {
-                    $el.addClass(settings.inView);
-                }
-                if ( settings.outView != null && el.hasClass(settings.outView) ) {
-                    $el.removeClass(settings.outView);
-                }
-            }
-            else {
-                if ( settings.removeWhenOut && $el.hasClass(settings.inView) ) {
-                    $el.removeClass(settings.inView);
-                }
-                if ( settings.outView != null && !$el.hasClass(settings.outView)) {
-                    $el.addClass( settings.outView );
-                }
-            }
         }
 
-        return this.each(function() {
-            // Save a reference to the DOM object
-            var $el = $(this);
-            checkVisibility($el);
-            // Check visibility on scroll and resize
-            $(window).scroll(function() {
-                checkVisibility($el);
-            });
-            $(window).resize(function() {
-                checkVisibility($el);
-            });
-
+        // set master scroll listener
+        $(window).scroll(function(){
+            sTop = jQuery(window).scrollTop();
+            window.requestAnimationFrame(checkVisibility);
         });
 
+        // kick main functions
+        calculateOffsets();
+        checkVisibility();
+
+        // return $elems
+        return this;
     }
 
 }(jQuery));

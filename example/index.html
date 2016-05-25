@@ -6,7 +6,16 @@
         <script type="text/javascript">
 
             $(document).ready(function(){
-                $('.content').classInView();
+                $('img').whenInView({
+                    elementIn: function(a){
+                        console.log('in: ');
+                        console.log(a);
+                    },
+                    elementOut: function(a){
+                        console.log('out: ');
+                        console.log(a);
+                    }
+                });
             });
 
         </script>
@@ -18,17 +27,60 @@
             .content.element-in-view .info {
                 background-color: #dfd;
             }
+            img {
+                height: 300px;
+                width: 540px;
+            }
+            .row {
+                margin-bottom: 60px;
+            }
         </style>
     </head>
     <body>
 
-        <div class="tall" style="height:2000px;">
+        <div class="tall">
 
-            <div class="content" style="background-color: #ccf; height: 100px;">
-                Content (scroll this window)
-                <div class="info" style="position:fixed; right: 0; height: 50px">Green: Content is in viewport. Red: Content is out of viewport</div>
+            <div class="row">
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
             </div>
 
+            <div class="row">
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+            </div>
+
+            <div class="row">
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+            </div>
+
+            <div class="row">
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+            </div>
+
+            <div class="row">
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+            </div>
+
+            <div class="row">
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+            </div>
+
+            <div class="row">
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+            </div>
+
+            <div class="row">
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+            </div>
+
+            <div class="row">
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+            </div>
+
+            <div class="row">
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+                <img src="http://lorempixel.com/540/300/cats" alt="" />
+            </div>
         </div>
 
     </body>
