@@ -37,7 +37,7 @@ jQuery('.elements').whenInView(
 ```
 
 ### Settings
-You can also define settings with an object:
+You can also define settings by passing an object:
 ```javascript
 // Default settings
 var settings = {
