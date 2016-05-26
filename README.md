@@ -62,7 +62,7 @@ jQuery('element-selector').whenInView({
 
 ### Staggered class additions
 ```javascript
-// Useful for avoiding simultaneous animations - see the images at https://kinfolklife.com/
+// Useful for creating staggered animations - see the images at https://kinfolklife.com/
 jQuery('element-selector').whenInView({
   staggerInterval: 250
 });
