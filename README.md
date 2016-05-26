@@ -23,7 +23,7 @@ For default behavior, that's it! Elements that match the selector you chose will
 You can also specify a custom callback to be performed on an element when it enters view:
 ```javascript
 jQuery('.elements').whenInView( function($elem) {
-  // Do something when jQuery object $elem enters the viewport
+  // Do something with jQuery object $elem when it enters the viewport
 });
 ```
 This will overwrite the default behavior (ie, the `element-in-view` class won't be added to elements in view any more).
@@ -31,8 +31,8 @@ This will overwrite the default behavior (ie, the `element-in-view` class won't 
 If you include a second callback, that function will act on elements when they leave view:
 ```javascript
 jQuery('.elements').whenInView( 
-  function($elem) { /* Do something when jQuery object $elem enters the viewport */ },
-  function($elem) { /* Do something when jQuery object $elem leaves the viewport */ }
+  function($elem) { /* Do something with jQuery object $elem when it enters the viewport */ },
+  function($elem) { /* Do something with jQuery object $elem when it leaves the viewport */ }
 );
 ```
 
