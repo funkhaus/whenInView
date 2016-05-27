@@ -78,3 +78,11 @@ jQuery('element-selector').whenInView({
   bottomOffset: 120
 });
 ```
+
+### Remove class when leaving view
+```javascript
+jQuery('element-selector').whenInView({
+  // Useful for retriggering class animations, for example
+  removeWhenOut: true
+});
+```
