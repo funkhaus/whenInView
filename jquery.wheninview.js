@@ -24,7 +24,8 @@
             elementOut: null,
             topOffset: 0,
             bottomOffset: 0,
-            staggerInterval: 0
+            staggerInterval: 0,
+            removeWhenOut: false
         }, options);
 
         // set default callbacks
@@ -38,7 +39,9 @@
             });
         };
         settings.elementOut = outCallback || settings.elementOut || function($elems){
-            $elems.removeClass( settings.className );
+            if (settings.removeWhenOut) {
+                $elems.removeClass( settings.className );
+            }
         };
 
         // Save window dimensions

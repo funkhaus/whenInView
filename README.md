@@ -47,7 +47,8 @@ var settings = {
   elementOut: null, // Custom callback when an element leaves view (accepts single jQuery object as parameter)
   topOffset: 0, // Amount of space at top of container before element registers as in view
   bottomOffset: 0, // Amount of space at bottom of container before element registers as in view
-  staggerInterval: 0 // Time (ms) between elementIn callback firing (see below) - ignored if elementIn is not default
+  staggerInterval: 0, // Time (ms) between elementIn callback firing (see below) - ignored if elementIn is not default
+  removeWhenOut: false // Should the default elementOut callback remove the class when the element is out of view? - ignored if elementOut is not default
 }
 ```
 
