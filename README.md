@@ -16,7 +16,7 @@ In your `document.ready` function, call `whenInView` on any elements you want to
 jQuery('.elements-to-mark-when-in-view').whenInView();
 ```
 
-For default behavior, that's it! Elements that match the selector you chose will have the `element-in-view` class added when in view and removed when out of view.
+For default behavior, that's it! Elements that match the selector you chose will have the `element-in-view` class added once when in view.
 
 ### Custom Callbacks
 
