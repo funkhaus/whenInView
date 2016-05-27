@@ -1,5 +1,5 @@
 /*!
-* jQuery whenInView; version: 1.0 build: 20160327
+* jQuery whenInView; version: 1.0 build: 20160327-2
 * https://github.com/funkhaus/whenInView
 * Copyright (c) 2016 Funkhaus; MIT license
 */
@@ -39,7 +39,9 @@
             $elems.each(function(i){
                 var $elem = jQuery(this);
                 setTimeout(function(){
-                    $elem.addClass(settings.className);
+                    if ( ! $elem.hasClass(settings.className) ) {
+                        $elem.addClass(settings.className);
+                    }
                 }, i * settings.staggerInterval);
             });
         };
