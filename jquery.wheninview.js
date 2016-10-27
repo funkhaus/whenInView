@@ -30,7 +30,8 @@
             topOffset: 0,
             bottomOffset: 0,
             staggerInterval: 0,
-            removeWhenOut: false
+            removeWhenOut: false,
+            RAF: true       // if true, the master scroll event will be wrapped in a requestAnimationFrame
         }, options);
 
         // set default callbacks
@@ -55,6 +56,32 @@
         var winHeight   = window.innerHeight || document.documentElement.clientHeight;
         var sTop = jQuery(settings.container).scrollTop();
 
+        // set variables for a percetage offset
+        var percentOffsetTop = false;
+        var percentOffsetBottom = false;
+
+        // if top offset was set as a percentage...
+        if ( String(settings.topOffset).indexOf('%') > -1 ){
+
+            // get the percentage as a float
+            percentOffsetTop = parseFloat( settings.topOffset.replace('%', '') / 100 );
+
+            // find the pixel value of the offset
+            settings.topOffset = winHeight * percentOffsetTop;
+
+        }
+
+        // if bottom offset was set as a percentage...
+        if ( String(settings.bottomOffset).indexOf('%') > -1 ){
+
+            // get the percentage as a float
+            percentOffsetBottom = parseFloat( settings.bottomOffset.replace('%', '') / 100 );
+
+            // find the pixel value of the offset
+            settings.bottomOffset = winHeight * percentOffsetBottom;
+
+        }
+
         // set top offset and height
         var calculateOffsets = function(){
 
@@ -73,8 +100,32 @@
 
         // Update window dimensions when necessary
         $(window).resize(function() {
+
+            // set window height
             winHeight = window.innerHeight || document.documentElement.clientHeight;
+
+            // recalculate top offset
+            if ( percentOffsetTop )
+                settings.topOffset = winHeight * percentOffsetTop;
+
+            // recalculate bottom offset
+            if ( percentOffsetBottom )
+                settings.bottomOffset = winHeight * percentOffsetBottom;
+
+            // recalculate offset as elements
             calculateOffsets();
+
+            // run visibility check
+            window.requestAnimationFrame(checkVisibility);
+        });
+
+        // catch manual recalculation event
+        $(document).on('whenInView-recalculate', function(){
+
+            // recalculate offset as elements
+            calculateOffsets();
+
+            // run visibility check
             window.requestAnimationFrame(checkVisibility);
         });
 
@@ -125,7 +176,14 @@
         // set master scroll listener
         $(settings.container).scroll(function(){
             sTop = jQuery(settings.container).scrollTop();
-            window.requestAnimationFrame(checkVisibility);
+
+            // fire callback
+            if ( settings.RAF ){
+                window.requestAnimationFrame(checkVisibility);
+            } else {
+                checkVisibility();
+            }
+
         });
 
         // kick main functions
