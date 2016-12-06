@@ -36,6 +36,14 @@ jQuery('.elements').whenInView(
 );
 ```
 
+You can also clear these callbacks:
+```javascript
+jQuery('.elements-with-callbacks').whenInView('clear'); // Clear all whenInView callbacks
+jQuery('.elements-with-callbacks').whenInView('clear', 'enter'); // Clear incoming element callbacks
+jQuery('.elements-with-callbacks').whenInView('clear', 'exit'); // Clear outgoing element callbacks
+```
+These are shortcuts for calling `off()` on the 'wheninview.enter' and 'wheninview.exit' events.
+
 ### Settings
 You can also define settings by passing an object:
 ```javascript

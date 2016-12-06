@@ -1,5 +1,5 @@
 /*!
-* jQuery whenInView; version: 1.0 build: 20160327-2
+* jQuery whenInView; version: 1.1
 * https://github.com/funkhaus/whenInView
 * Copyright (c) 2016 Funkhaus; MIT license
 */
@@ -10,6 +10,14 @@
         var inCallback,
             outCallback,
             $elems = this;
+
+        // if first param is 'clear', clear the given wheninview event or all wheninview events
+        if( options == 'clear' ){
+
+            $elems.off('wheninview.' + outCb ? outCb : 'enter wheninview.exit');
+            return this;
+
+        }
 
         // if first param is function, treat as inCallback
         if (typeof options === 'function') {
@@ -34,7 +42,7 @@
             RAF: true       // if true, the master scroll event will be wrapped in a requestAnimationFrame
         }, options);
 
-        // set default callbacks
+        // Prep enter-view callback
         settings.elementIn = inCallback || settings.elementIn || function($elems){
             // Stagger the class additions (default stagger interval is 0, so no visible effect)
             $elems.each(function(i){
@@ -46,11 +54,17 @@
                 }, i * settings.staggerInterval);
             });
         };
+        // Add enter-view callback
+        $elems.on('wheninview.enter', settings.elementIn);
+
+        // Prep leave-view callback
         settings.elementOut = outCallback || settings.elementOut || function($elems){
             if (settings.removeWhenOut) {
                 $elems.removeClass( settings.className );
             }
         };
+        // Add leave-view callback
+        $elems.on('wheninview.exit', settings.elementOut);
 
         // Save window dimensions
         var winHeight   = window.innerHeight || document.documentElement.clientHeight;
@@ -136,39 +150,39 @@
             var bottomTrigger = sTop + winHeight - settings.bottomOffset;
 
             // find all visible elements
-            var $visible = $elems.filter(function(){
+            var $incoming = $elems.filter(function(){
                 var elTop = jQuery(this).data('top');
                 var elHeight = jQuery(this).data('height');
                 return (elTop + elHeight) > topTrigger && elTop < bottomTrigger && !this.inView;
             });
 
-            if ( $visible.length ){
+            if ( $incoming.length ){
 
                 // set inView props
-                $visible.each(function(){
+                $incoming.each(function(){
                     this.inView = true;
                 });
 
                 // fire inView callback
-                settings.elementIn($visible);
+                $incoming.trigger('wheninview.enter', $incoming);
             }
 
             // find all outgoing elements
-            var $outGoing = $elems.filter(function(){
+            var $outgoing = $elems.filter(function(){
                 var elTop = jQuery(this).data('top');
                 var elHeight = jQuery(this).data('height');
                 return this.inView == true && ((elTop + elHeight) < topTrigger || elTop > bottomTrigger);
             });
 
-            if ( $outGoing.length ){
+            if ( $outgoing.length ){
 
                 // set inView props
-                $outGoing.each(function(){
+                $outgoing.each(function(){
                     this.inView = false;
                 });
 
                 // fire outgoing callback
-                settings.elementOut($outGoing);
+                $outgoing.trigger('wheninview.exit', $outgoing);
             }
 
         }
