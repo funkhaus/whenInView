@@ -1,5 +1,5 @@
 /*!
-* jQuery whenInView; version: 1.1
+* jQuery whenInView; version: 1.2
 * https://github.com/funkhaus/whenInView
 * Copyright (c) 2016 Funkhaus; MIT license
 */
@@ -14,7 +14,7 @@
         // if first param is 'clear', clear the given wheninview event or all wheninview events
         if( options == 'clear' ){
 
-            $elems.off('wheninview.' + outCb ? outCb : 'enter wheninview.exit');
+            $elems.off( outCb ? ( outCb + '.wheninview' ) : 'enter.wheninview exit.wheninview' );
             return this;
 
         }
@@ -43,7 +43,7 @@
         }, options);
 
         // Prep enter-view callback
-        settings.elementIn = inCallback || settings.elementIn || function($elems){
+        settings.elementIn = inCallback || settings.elementIn || function(){
             // Stagger the class additions (default stagger interval is 0, so no visible effect)
             $elems.each(function(i){
                 var $elem = jQuery(this);
@@ -55,7 +55,7 @@
             });
         };
         // Add enter-view callback
-        $elems.on('wheninview.enter', settings.elementIn);
+        $elems.on('enter.wheninview', settings.elementIn);
 
         // Prep leave-view callback
         settings.elementOut = outCallback || settings.elementOut || function($elems){
@@ -64,7 +64,7 @@
             }
         };
         // Add leave-view callback
-        $elems.on('wheninview.exit', settings.elementOut);
+        $elems.on('exit.wheninview', settings.elementOut);
 
         // Save window dimensions
         var winHeight   = window.innerHeight || document.documentElement.clientHeight;
@@ -134,7 +134,7 @@
         });
 
         // catch manual recalculation event
-        $(document).on('whenInView-recalculate', function(){
+        $(document).on('recalculate.wheninview', function(){
 
             // recalculate offset as elements
             calculateOffsets();
@@ -164,7 +164,7 @@
                 });
 
                 // fire inView callback
-                $incoming.trigger('wheninview.enter', $incoming);
+                $incoming.trigger('enter.wheninview', $incoming);
             }
 
             // find all outgoing elements
@@ -182,7 +182,7 @@
                 });
 
                 // fire outgoing callback
-                $outgoing.trigger('wheninview.exit', $outgoing);
+                $outgoing.trigger('exit.wheninview', $outgoing);
             }
 
         }

@@ -3,6 +3,8 @@ jQuery plugin to listen for when elements enter the window.
 
 ### How
 
+[Example](http://codepen.io/SaFrMo/pen/ENOMrN)
+
 Include a reference to jQuery and `jquery.wheninview.js` in your html file. 
 
 ```html
