@@ -96,3 +96,9 @@ jQuery('element-selector').whenInView({
   removeWhenOut: true
 });
 ```
+
+-------
+
+Version 1.2.1
+
+http://funkhaus.us
