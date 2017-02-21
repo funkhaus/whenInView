@@ -46,7 +46,7 @@
         settings.elementIn = inCallback || settings.elementIn || function(){
             // Stagger the class additions (default stagger interval is 0, so no visible effect)
             $elems.each(function(i){
-                var $elem = jQuery(this);
+                var $elem = $(this);
                 setTimeout(function(){
                     if ( ! $elem.hasClass(settings.className) ) {
                         $elem.addClass(settings.className);
@@ -68,7 +68,7 @@
 
         // Save window dimensions
         var winHeight   = window.innerHeight || document.documentElement.clientHeight;
-        var sTop = jQuery(settings.container).scrollTop();
+        var sTop = $(settings.container).scrollTop();
 
         // set variables for a percetage offset
         var percentOffsetTop = false;
@@ -151,8 +151,8 @@
 
             // find all visible elements
             var $incoming = $elems.filter(function(){
-                var elTop = jQuery(this).data('top');
-                var elHeight = jQuery(this).data('height');
+                var elTop = $(this).data('top');
+                var elHeight = $(this).data('height');
                 return (elTop + elHeight) > topTrigger && elTop < bottomTrigger && !this.inView;
             });
 
@@ -169,8 +169,8 @@
 
             // find all outgoing elements
             var $outgoing = $elems.filter(function(){
-                var elTop = jQuery(this).data('top');
-                var elHeight = jQuery(this).data('height');
+                var elTop = $(this).data('top');
+                var elHeight = $(this).data('height');
                 return this.inView == true && ((elTop + elHeight) < topTrigger || elTop > bottomTrigger);
             });
 
@@ -189,7 +189,7 @@
 
         // set master scroll listener
         $(settings.container).scroll(function(){
-            sTop = jQuery(settings.container).scrollTop();
+            sTop = $(settings.container).scrollTop();
 
             // fire callback
             if ( settings.RAF ){
