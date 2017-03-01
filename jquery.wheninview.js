@@ -1,5 +1,5 @@
 /*!
-* jQuery whenInView; version: 1.2.1
+* jQuery whenInView; version: 1.2.2
 * https://github.com/funkhaus/whenInView
 * Copyright (c) 2016 Funkhaus; MIT license
 */
@@ -44,15 +44,9 @@
 
         // Prep enter-view callback
         settings.elementIn = inCallback || settings.elementIn || function(){
-            // Stagger the class additions (default stagger interval is 0, so no visible effect)
-            $elems.each(function(i){
-                var $elem = $(this);
-                setTimeout(function(){
-                    if ( ! $elem.hasClass(settings.className) ) {
-                        $elem.addClass(settings.className);
-                    }
-                }, i * settings.staggerInterval);
-            });
+
+            $(this).addClass(settings.className);
+
         };
         // Add enter-view callback
         $elems.on('enter.wheninview', settings.elementIn);
@@ -163,8 +157,21 @@
                     this.inView = true;
                 });
 
-                // fire inView callback
-                $incoming.trigger('enter.wheninview', $incoming);
+                // Stagger the class additions (default stagger interval is 0, so no visible effect)
+                $incoming.each(function(i){
+                    var $elem = $(this);
+
+                    if( settings.staggerInterval > 0 ){
+                        setTimeout(function(){
+                            // fire inView callback
+                            $elem.trigger('enter.wheninview', $incoming);
+                        }, i * settings.staggerInterval);
+                    } else {
+                        // fire inView callback
+                        $elem.trigger('enter.wheninview', $incoming);
+                    }
+                });
+
             }
 
             // find all outgoing elements
