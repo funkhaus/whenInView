@@ -31,19 +31,23 @@
 
         // Defaults
         var settings = $.extend({
-            className: 'element-in-view',
-            container: window,
-            elementIn: null,
-            elementOut: null,
-            topOffset: 0,
-            bottomOffset: 0,
-            staggerInterval: 0,
-            removeWhenOut: false,
-            RAF: true       // if true, the master scroll event will be wrapped in a requestAnimationFrame
+            className:          'element-in-view',
+            container:          window,
+            elementIn:          null,
+            elementOut:         null,
+            topOffset:          0,
+            bottomOffset:       0,
+            staggerInterval:    0,
+            removeWhenOut:      false,
+            RAF:                true,       // if true, the master scroll event will be wrapped in a requestAnimationFrame
+            stopListening:      false       // if true, calls $(element).whenInView('clear') when elementIn has been triggered
+                                                // - also clears container scroll event if all wheninview events have been cleared
+                                                // (ignores if elementIn is not default)
         }, options);
 
         // Prep enter-view callback
         settings.elementIn = inCallback || settings.elementIn || function(){
+
             // Stagger the class additions (default stagger interval is 0, so no visible effect)
             $elems.each(function(i){
                 var $elem = $(this);
@@ -53,9 +57,28 @@
                     }
                 }, i * settings.staggerInterval);
             });
+
+            // Clear events if desired
+            if( settings.stopListening ){
+                $(this).whenInView('clear');
+
+                // Save total cleared events
+                var totalCleared = $(settings.container).data('clearedListeners.wheninview') + 1;
+                $(settings.container).data('clearedListeners.wheninview', totalCleared);
+
+                // Clear scroll event if all other whenInView events cleared
+                if( totalCleared >= $(settings.container).data('listeners.wheninview') ){
+                    $(settings.container).unbind('scroll', masterScrollListener);
+                }
+            }
         };
         // Add enter-view callback
         $elems.on('enter.wheninview', settings.elementIn);
+
+        // Save total number of whenInView listeners on container
+        var currentListeners = $(settings.container).data('listeners.wheninview') || 0;
+        $(settings.container).data('listeners.wheninview', currentListeners + $elems.length);
+        $(settings.container).data('clearedListeners.wheninview', 0);
 
         // Prep leave-view callback
         settings.elementOut = outCallback || settings.elementOut || function($elems){
@@ -187,8 +210,8 @@
 
         }
 
-        // set master scroll listener
-        $(settings.container).scroll(function(){
+        // name master scroll listener
+        var masterScrollListener = function(){
             sTop = $(settings.container).scrollTop();
 
             // fire callback
@@ -198,7 +221,10 @@
                 checkVisibility();
             }
 
-        });
+        }
+
+        // set master scroll listener
+        $(settings.container).scroll(masterScrollListener);
 
         // kick main functions
         calculateOffsets();
