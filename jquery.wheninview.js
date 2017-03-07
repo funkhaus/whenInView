@@ -1,5 +1,5 @@
 /*!
-* jQuery whenInView; version: 1.2.2
+* jQuery whenInView; version: 1.2.3
 * https://github.com/funkhaus/whenInView
 * Copyright (c) 2016 Funkhaus; MIT license
 */
@@ -31,15 +31,16 @@
 
         // Defaults
         var settings = $.extend({
-            className: 'element-in-view',
-            container: window,
-            elementIn: null,
-            elementOut: null,
-            topOffset: 0,
-            bottomOffset: 0,
-            staggerInterval: 0,
-            removeWhenOut: false,
-            RAF: true       // if true, the master scroll event will be wrapped in a requestAnimationFrame
+            className:          'element-in-view',
+            container:          window,
+            elementIn:          null,
+            elementOut:         null,
+            topOffset:          0,
+            bottomOffset:       0,
+            staggerInterval:    0,
+            removeWhenOut:      false,
+            RAF:                true,       // if true, the master scroll event will be wrapped in a requestAnimationFrame
+            fireAtStart:        true
         }, options);
 
         // Prep enter-view callback
@@ -194,8 +195,8 @@
 
         }
 
-        // set master scroll listener
-        $(settings.container).scroll(function(){
+        // name master scroll listener
+        var masterScrollListener = function(){
             sTop = $(settings.container).scrollTop();
 
             // fire callback
@@ -205,11 +206,17 @@
                 checkVisibility();
             }
 
-        });
+        }
+
+        // set master scroll listener
+        $(settings.container).scroll(masterScrollListener);
+
+        calculateOffsets();
 
         // kick main functions
-        calculateOffsets();
-        checkVisibility();
+        if( settings.fireAtStart ){
+            checkVisibility();
+        }
 
         // return $elems
         return this;

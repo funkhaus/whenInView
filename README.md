@@ -5,7 +5,7 @@ jQuery plugin to listen for when elements enter the window.
 
 [Example](http://codepen.io/SaFrMo/pen/ENOMrN)
 
-Include a reference to jQuery and `jquery.wheninview.js` in your html file. 
+Include a reference to jQuery and `jquery.wheninview.js` in your html file.
 
 ```html
 <script src="path/to/jquery.js"></script>
@@ -13,7 +13,7 @@ Include a reference to jQuery and `jquery.wheninview.js` in your html file.
 ```
 
 In your `document.ready` function, call `whenInView` on any elements you want to perform a special action when entering or leaving view.
- 
+
 ```javascript
 jQuery('.elements-to-mark-when-in-view').whenInView();
 ```
@@ -32,7 +32,7 @@ This will overwrite the default behavior (ie, the `element-in-view` class won't 
 
 If you include a second callback, that function will act on elements when they leave view:
 ```javascript
-jQuery('.elements').whenInView( 
+jQuery('.elements').whenInView(
   function($elem) { /* Do something with jQuery object $elem when it enters the viewport */ },
   function($elem) { /* Do something with jQuery object $elem when it leaves the viewport */ }
 );
@@ -58,7 +58,8 @@ var settings = {
   topOffset: 0, // Amount of space at top of container before element registers as in view
   bottomOffset: 0, // Amount of space at bottom of container before element registers as in view
   staggerInterval: 0, // Time (ms) between elementIn callback firing (see below) - ignored if elementIn is not default
-  removeWhenOut: false // Should the default elementOut callback remove the class when the element is out of view? - ignored if elementOut is not default
+  removeWhenOut: false, // Should the default elementOut callback remove the class when the element is out of view? - ignored if elementOut is not default
+  fireAtStart: true // Should we check if the element is in view right away? If not, we'll just check on scroll
 }
 ```
 
@@ -89,16 +90,9 @@ jQuery('element-selector').whenInView({
 });
 ```
 
-### Remove class when leaving view
-```javascript
-jQuery('element-selector').whenInView({
-  // Useful for retriggering class animations, for example
-  removeWhenOut: true
-});
-```
 
 -------
 
-Version 1.2.1
+Version 1.2.3
 
 http://funkhaus.us
