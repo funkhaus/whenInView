@@ -1,8 +1,5 @@
-/*!
-* jQuery whenInView; version: 1.2.3
-* https://github.com/funkhaus/whenInView
-* Copyright (c) 2016 Funkhaus; MIT license
-*/
+
+
 (function($) {
 
     $.fn.whenInView = function(options, outCb) {

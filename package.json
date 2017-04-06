@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server && webpack --watch --progress"
+    "dev": "webpack --watch --progress",
+    "demo": "webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -16,5 +17,12 @@
   "bugs": {
     "url": "https://github.com/funkhaus/whenInView/issues"
   },
-  "homepage": "https://github.com/funkhaus/whenInView#readme"
+  "homepage": "https://github.com/funkhaus/whenInView#readme",
+  "dependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-env": "^1.3.2",
+    "webpack": "^2.3.3"
+  }
 }
