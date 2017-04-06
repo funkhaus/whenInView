@@ -1,7 +1,7 @@
 ## Development
 1. `npm install`
 1. `npm run dev` to build and watch
-1. `npm run demo` to set up webpack dev server ([localhost:8080/demo](localhost:8080/demo))
+1. `npm run demo` to set up webpack dev server ([localhost:8080/demo](http://localhost:8080/demo))
 
 
 
