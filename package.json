@@ -1,0 +1,20 @@
+{
+  "name": "wheninview",
+  "version": "2.0.0",
+  "description": "Listen for elements entering and leaving a specified area.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server && webpack --watch --progress"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/funkhaus/whenInView.git"
+  },
+  "author": "Funkhaus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/funkhaus/whenInView/issues"
+  },
+  "homepage": "https://github.com/funkhaus/whenInView#readme"
+}
