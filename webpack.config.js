@@ -1,9 +1,14 @@
+var WriteFilePlugin = require( 'write-file-webpack-plugin' );
+
 module.exports = {
     entry: "./src/index.js",
     output: {
         path: __dirname + '/dist/',
         filename: "wheninview.min.js"
     },
+    plugins: [
+        new WriteFilePlugin()
+    ],
     module: {
         rules: [
             {
