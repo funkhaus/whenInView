@@ -4,7 +4,8 @@ module.exports = {
     entry: "./src/index.js",
     output: {
         path: __dirname + '/dist/',
-        filename: "wheninview.min.js"
+        filename: "wheninview.min.js",
+        library: 'wheninview'
     },
     plugins: [
         new WriteFilePlugin()

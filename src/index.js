@@ -1,7 +1,5 @@
 // import box from 'the-dom-box'
 
-export default {
-    wheninview(el){
-        console.log(el)
-    }
+module.exports = el => {
+    console.log(el)
 }
