@@ -61,20 +61,67 @@ module.exports = {
 
         })
 
+        return els
+
     },
 
     calculateOffsets: el => {
 
         const rect = el.getBoundingClientRect()
 
-        module.exports.data[el].docPosition = {
-            top: rect.top + document.body.scrollTop,
-            left: rect.left + document.body.scrollLeft
-        }
-        module.exports.data[el].viewPosition = {
+        module.exports.data[el] = {
+            docPosition: {
+                top: rect.top + document.body.scrollTop,
+                left: rect.left + document.body.scrollLeft
+            },
+            rect: rect,
+            width: rect.width,
+            height: rect.height,
             top: rect.top,
             left: rect.left
         }
+
+    },
+
+    isOverlapping: (rectA, rectB) => {
+
+        module.exports.refresh()
+
+        const a = module.exports.data[rectA]
+        const b = module.exports.data[rectB]
+
+        // http://stackoverflow.com/questions/13390333/two-rectangles-intersection
+        if(
+            a.left + a.width < b.left ||
+            b.left + b.width < a.left ||
+            a.top + a.height < b.top ||
+            b.top + b.height < a.top
+        ){
+            return false
+        } else {
+            return true
+        }
+
+    },
+
+    watchOverlap: ( optionsA, optionsB, callback ) => {
+
+        const a = module.exports.watch(optionsA)[0]
+        const b = module.exports.watch(optionsB)[0]
+
+        window.addEventListener('scroll', () => {
+            if( module.exports.isOverlapping(a, b) ){
+                callback()
+            }
+        })
+
+    },
+
+    refresh: () => {
+
+        module.exports.watched.forEach( el => {
+            module.exports.calculateOffsets(el)
+        })
 
     }
 }
