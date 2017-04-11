@@ -1,1 +1,2 @@
-wheninview('blockquote');
+wheninview.watch('blockquote');
+wheninview.watch('p')
