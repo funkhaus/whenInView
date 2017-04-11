@@ -3,8 +3,60 @@
     <head>
         <meta charset="UTF-8">
         <title>wheninview dev</title>
+        <style type="text/css">
+            body {
+                margin: 0;
+                background-color: #EA9CB4;
+                font-family: sans-serif;
+                font-weight: 700;
+            }
+            .body-wrap {
+                width: 500px;
+                max-height: 600px;
+                overflow-y: auto;
+            }
+            .fixed {
+                position: fixed;
+                background-color: #ffffff;
+                padding: 60px 20px;
+                border-radius: 15px;
+                left: 20px;
+                top: 140px;
+                width: 110px;
+                box-sizing: border-box;
+            }
+            .entry {
+                margin-left: 30px;
+                max-width: 500px;
+            }
+            .entry p {
+                margin: 30px 30px 30px 150px;
+            }
+            .hidden {
+                opacity: 0;
+            }
+        </style>
     </head>
     <body>
+
+        <div class="body-wrap">
+          <div class="fixed">
+            I'm fixed.
+          </div>
+
+          <div class="entry">
+            <h3>Scroll down.</h3>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+            <blockquote>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</blockquote>
+              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+          </div>
+        </div>
 
         <script src="/dist/wheninview.min.js"></script>
         <script src="/demo/demo.js"></script>
