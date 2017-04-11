@@ -10,6 +10,7 @@ module.exports = {
 
     data: new WeakMap(),
     watched: [],
+    overlapping: [],
 
     watch: options => {
 
@@ -104,14 +105,24 @@ module.exports = {
 
     },
 
-    watchOverlap: ( optionsA, optionsB, callback ) => {
+    watchOverlap: ( optionsA, optionsB, onOverlapEnter, onOverlapExit = null, containerSelector = false ) => {
 
         const a = module.exports.watch(optionsA)[0]
         const b = module.exports.watch(optionsB)[0]
 
-        window.addEventListener('scroll', () => {
-            if( module.exports.isOverlapping(a, b) ){
-                callback()
+        const container = containerSelector ? document.querySelector(containerSelector) : window
+
+        container.addEventListener('scroll', () => {
+            const overlapping = module.exports.isOverlapping(a, b)
+
+            if( !module.exports.overlapping.includes( [a, b] ) && overlapping ){
+                onOverlapEnter(a, b)
+                module.exports.overlapping.push( [ a, b ] )
+            }
+
+            if( module.exports.overlapping.indexOf( [a, b] ) !== -1 && !overlapping){
+                onOverlapExit(a, b)
+                module.exports.overlapping.splice( module.exports.overlapping.indexOf([a, b]) )
             }
         })
 
