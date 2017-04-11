@@ -41,24 +41,40 @@ module.exports = {
         els.forEach( el => {
 
             if( typeof options.elementIn === 'function' ){
-                el.addEventListener( 'enter.wheninview', options.elementIn(el) )
+                el.addEventListener( 'enter.wheninview', el => { options.elementIn(el) } )
             }
 
             if( typeof options.elementOut === 'function' ){
-                el.addEventListener( 'exit.wheninview', options.elementOut(el) )
-            }
-
-            el.dispatchEvent( exit )
-
-            module.exports.data[el] = {
-                test: 'test'
+                el.addEventListener( 'exit.wheninview', el => { options.elementOut(el) } )
             }
 
             module.exports.watched.push(el)
 
+            module.exports.data[el] = {}
+
+            if( options.container !== window ){
+                options.container = document.querySelector(options.container)
+            }
+
+            options.container.addEventListener('scroll', evt => { module.exports.calculateOffsets(el) } )
+
+
         })
 
-        // Calculate window dimensions
-        win.height = window.innerHeight || document.documentElement.clientHeight
+    },
+
+    calculateOffsets: el => {
+
+        const rect = el.getBoundingClientRect()
+
+        module.exports.data[el].docPosition = {
+            top: rect.top + document.body.scrollTop,
+            left: rect.left + document.body.scrollLeft
+        }
+        module.exports.data[el].viewPosition = {
+            top: rect.top,
+            left: rect.left
+        }
+
     }
 }
