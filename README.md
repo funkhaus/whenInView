@@ -1,8 +1,9 @@
 ## Development
 1. `npm install`
-1. `npm run dev` to build, watch, and set up a webpack dev server ([localhost:8080/demo](http://localhost:8080/demo))
+1. `npm run demo` to build, watch, and set up a webpack dev server ([localhost:8080/demo](http://localhost:8080/demo))
 
-
+## Translation from old version
+* Need to incorporate [these lines](https://github.com/funkhaus/whenInView/blob/master/jquery.wheninview.js#L66-L92)
 
 
 

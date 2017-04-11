@@ -1,6 +1,5 @@
 
-wheninview.watchOverlap('blockquote', '.fixed', function(a, b){
-    b.classList.add('overlap')
-}, function(a, b){
-    b.classList.remove('overlap')
-}, '.body-wrap');
+wheninview.watch({
+    selector: 'p:last-of-type, p:first-of-type',
+    container: '.body-wrap'
+});
