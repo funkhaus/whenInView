@@ -9,6 +9,7 @@ module.exports = {
     overlapping: [],
     current: 0,
     watched: [],
+    inView: [],
     win: { height: -1 },
     scroll: { top: 0 },
 
@@ -81,10 +82,11 @@ module.exports = {
             container.addEventListener('scroll', evt => {
 
                 module.exports.refresh()
+                module.exports.checkVisibility()
 
-                if( module.exports.overlapping( el, options.overlap ) ){
-                    el.dispatchEvent(enter)
-                }
+                // if( module.exports.overlapping( el, options.overlap ) ){
+                //     el.dispatchEvent(enter)
+                // }
             })
 
         })
@@ -100,6 +102,7 @@ module.exports = {
         // Save window data
         module.exports.win.height = window.innerHeight || document.documentElement.clientHeight
 
+        // Save location and dimension data on watched elements
         module.exports.watched.forEach( watched => {
             const rect = watched.element.getBoundingClientRect()
             watched.element.setAttribute('data-wiv-top', rect.top)
@@ -108,28 +111,71 @@ module.exports = {
 
     },
 
-    overlapping: (a, b = 'viewport') => {
+    checkVisibility: () => {
 
-        if( a.getAttribute('data-wiv-index') === null ){
-            module.exports.watch({
-                element: a,
-                elementIn: null
+        // Assumes refresh() was called
+
+        module.exports.watched.forEach( watched => {
+
+            const top = watched.container.scrollTop // include top offset
+            const bottom = top + module.exports.win.height // include bottom offset
+
+            // Find all newly visible elements
+            const incoming = module.exports.watched.filter( watched => {
+                const el = watched.element
+                const elTop = Number( el.getAttribute('data-wiv-top') )
+                const elHeight = Number( el.getAttribute('data-wiv-height') )
+                return
+                    (elTop + elHeight) > top &&
+                    elTop < bottom &&
+                    !module.exports.inView.includes( el.getAttribute('data-wiv-index') )
             })
-        }
 
-        // Special case for viewport
-        if( b != 'viewport' ){
-            if( b.getAttribute('data-wiv-index') === null ){
-                module.exports.watch({
-                    element: b,
-                    elementIn: null
-                })
-            }
-        } else {
-            console.log('viewport')
-        }
+            incoming.forEach( el => {
+                module.exports.inView.push( el.getAttribute('data-wiv-index') )
+            })
+
+        })
 
     }
+
+    // overlapping: (a, b = 'viewport') => {
+    //
+    //     if( a.getAttribute('data-wiv-index') === null ){
+    //         module.exports.watch({
+    //             element: a,
+    //             elementIn: null
+    //         })
+    //     }
+    //
+    //     // Special case for viewport
+    //     if( b != 'viewport' ){
+    //         if( b.getAttribute('data-wiv-index') === null ){
+    //             module.exports.watch({
+    //                 element: b,
+    //                 elementIn: null
+    //             })
+    //         }
+    //     } else {
+    //         console.log('viewport')
+    //     }
+    //
+    // },
+    //
+    // isOverlapping: (a, b) => {
+    //     //http://stackoverflow.com/questions/13390333/two-rectangles-intersection
+    //     if(
+    //        a.left + a.width < b.left ||
+    //        b.left + b.width < a.left ||
+    //        a.top + a.height < b.top ||
+    //        b.top + b.height < a.top
+    //     ){
+    //        return false
+    //     } else {
+    //        return true
+    //     }
+    // }
+
 
     // calculateOffsets: el => {
     //
