@@ -1,5 +1,6 @@
 const extend = require('lodash/defaultsDeep')
 const utils = require('./utils')
+const getElement = require('./getElement')
 
 const enter = utils.createEvent('enter.wheninview')
 const exit = utils.createEvent('exit.wheninview')
@@ -26,7 +27,8 @@ module.exports = {
         options = extend(options, {
             selector:           '.wheninview',
             className:          'element-in-view',
-            element:            false,
+            element:            false,      // If this is set to 'false', use options.selector to find the element(s).
+                                            // If we want to manually pass an element, set this value to the desired element.
             container:          window,
             elementIn:          el => { utils.addClass(el, options.className) },
             elementOut:         () => { console.log('No exit.wheninview event defined') },
@@ -39,19 +41,22 @@ module.exports = {
             overlap:            'viewport'
         })
 
+        // The elements we'll be watching
         let els = []
 
         if( options.element !== false ){
+            // Use declared element by default...
             els.push(options.element)
         } else {
+            // ...otherwise, find by selector
             els = document.querySelectorAll(options.selector)
         }
 
-        // Prep callbacks
         els.forEach( el => {
 
-            // Save container
+            // Save element container
             let container = options.container
+            // Use `window` by default, query selector otherwise
             if( container !== window ){
                 container = document.querySelector(options.container)
 
@@ -61,32 +66,34 @@ module.exports = {
                 }
             }
 
-            // Save index if we aren't yet watching
+            // Find wheninview index of this element
             const elIndex = el.getAttribute('data-wiv-index')
+            // Save index if we're not yet watching
             if( elIndex === null ){
                 el.setAttribute('data-wiv-index', module.exports.current++)
+                // Save element and container
                 module.exports.watched.push({
                     element: el,
                     container: container
                 })
             }
 
+            // Save callback for element entering view
             if( typeof options.elementIn === 'function' ){
                 el.addEventListener( 'enter.wheninview', evt => { options.elementIn(el); } )
             }
 
+            // Save callback for element leaving view
             if( typeof options.elementOut === 'function' ){
                 el.addEventListener( 'exit.wheninview', evt => { options.elementOut(el) } )
             }
 
+            // Set up scroll event for this element
             container.addEventListener('scroll', evt => {
 
                 module.exports.refresh()
                 module.exports.checkVisibility()
 
-                // if( module.exports.overlapping( el, options.overlap ) ){
-                //     el.dispatchEvent(enter)
-                // }
             })
 
         })
@@ -115,21 +122,44 @@ module.exports = {
 
         // Assumes refresh() was called
 
+        let incoming = []
+        let outgoing = []
+
         // Find all newly visible elements
-        const incoming = module.exports.watched.filter( single => {
+        module.exports.watched.forEach( single => {
 
+            // Save container position and dimensions
             const top = single.container.scrollTop // include top offset
-            const bottom = top + module.exports.win.height // include bottom offset
+            const bottom = top + module.exports.win.innerHeight // include bottom offset
 
+            // Save element position and dimensions
             const el = single.element
             const elTop = Number( el.getAttribute('data-wiv-top') )
             const elHeight = Number( el.getAttribute('data-wiv-height') )
 
-            return (elTop + elHeight) > top && elTop < bottom && !module.exports.inView.includes( el.getAttribute('data-wiv-index') )
+            // Place in appropriate list, if applicable
+            if( (elTop + elHeight) > top && elTop < bottom && !module.exports.inView.includes( el.getAttribute('data-wiv-index') ) ){
+                incoming.push(single)
+            } else if( module.exports.inView.includes( el.getAttribute('data-wiv-index') ) && ((elTop + elHeight) < top || elTop > bottom) ){
+                outgoing.push(single)
+            }
         })
+
+        if( incoming.length ){
+            console.log('incoming')
+            console.log(incoming)
+        }
+        if( outgoing.length ){
+            console.log('outgoing')
+            console.log(outgoing)
+        }
 
         incoming.forEach( el => {
             module.exports.inView.push( el.element.getAttribute('data-wiv-index') )
+        })
+        outgoing.forEach( el => {
+            const index = module.exports.inView.indexOf( el.element.getAttribute('data-wiv-index') )
+            module.exports.inView.splice( index, 1 )
         })
 
     }
