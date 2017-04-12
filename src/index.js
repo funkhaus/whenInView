@@ -115,26 +115,21 @@ module.exports = {
 
         // Assumes refresh() was called
 
-        module.exports.watched.forEach( watched => {
+        // Find all newly visible elements
+        const incoming = module.exports.watched.filter( single => {
 
-            const top = watched.container.scrollTop // include top offset
+            const top = single.container.scrollTop // include top offset
             const bottom = top + module.exports.win.height // include bottom offset
 
-            // Find all newly visible elements
-            const incoming = module.exports.watched.filter( watched => {
-                const el = watched.element
-                const elTop = Number( el.getAttribute('data-wiv-top') )
-                const elHeight = Number( el.getAttribute('data-wiv-height') )
-                return
-                    (elTop + elHeight) > top &&
-                    elTop < bottom &&
-                    !module.exports.inView.includes( el.getAttribute('data-wiv-index') )
-            })
+            const el = single.element
+            const elTop = Number( el.getAttribute('data-wiv-top') )
+            const elHeight = Number( el.getAttribute('data-wiv-height') )
 
-            incoming.forEach( el => {
-                module.exports.inView.push( el.getAttribute('data-wiv-index') )
-            })
+            return (elTop + elHeight) > top && elTop < bottom && !module.exports.inView.includes( el.getAttribute('data-wiv-index') )
+        })
 
+        incoming.forEach( el => {
+            module.exports.inView.push( el.element.getAttribute('data-wiv-index') )
         })
 
     }
