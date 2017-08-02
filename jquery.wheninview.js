@@ -1,5 +1,5 @@
 /*!
-* jQuery whenInView; version: 1.2.3
+* jQuery whenInView; version: 1.2.5
 * https://github.com/funkhaus/whenInView
 * Copyright (c) 2016 Funkhaus; MIT license
 */
@@ -55,7 +55,9 @@
         // Prep leave-view callback
         settings.elementOut = outCallback || settings.elementOut || function($elems){
             if (settings.removeWhenOut) {
-                $($elems).removeClass( settings.className );
+                            console.log($($($elems).get(0).target));
+
+                $($($elems).get(0).target).removeClass( settings.className );
             }
         };
         // Add leave-view callback

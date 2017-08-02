@@ -93,6 +93,6 @@ jQuery('element-selector').whenInView({
 
 -------
 
-Version 1.2.4
+Version 1.2.5
 
 http://funkhaus.us
