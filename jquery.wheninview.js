@@ -55,7 +55,7 @@
         // Prep leave-view callback
         settings.elementOut = outCallback || settings.elementOut || function($elems){
             if (settings.removeWhenOut) {
-                $elems.removeClass( settings.className );
+                $($elems).removeClass( settings.className );
             }
         };
         // Add leave-view callback
